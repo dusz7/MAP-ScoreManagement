@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.hitiot.dusz7.mtdex.ex1.CalculatorPadLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pad_operator"
+    style="@style/PadLayoutStyle.Operator"
+    android:background="@color/pad_operator_background_color"
+    android:columnCount="1"
+    android:rowCount="6">
+
+    <Button
+        android:id="@+id/del"
+        style="@style/PadButtonStyle.Operator.Text"
+        android:onClick="onButtonClick"
+        android:text="Del" />
+
+    <Button
+        android:id="@+id/clr"
+        style="@style/PadButtonStyle.Operator.Text"
+        android:onClick="onButtonClick"
+        android:text="Clr"
+         />
+
+    <Button
+        android:id="@+id/op_div"
+        style="@style/PadButtonStyle.Operator"
+        android:onClick="onButtonClick"
+        android:text="/" />
+
+    <Button
+        android:id="@+id/op_mul"
+        style="@style/PadButtonStyle.Operator"
+        android:onClick="onButtonClick"
+        android:text="*" />
+
+    <Button
+        android:id="@+id/op_sub"
+        style="@style/PadButtonStyle.Operator"
+        android:onClick="onButtonClick"
+        android:text="-" />
+
+    <Button
+        android:id="@+id/op_add"
+        style="@style/PadButtonStyle.Operator"
+        android:onClick="onButtonClick"
+        android:text="+" />
+
+</com.hitiot.dusz7.mtdex.ex1.CalculatorPadLayout>

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MTDEx</string>
+    <string name="main_title">移动开发实验</string>
+    <string name="ex1_1">计算器Demo</string>
+    <string name="ex1_2">弹球动画Demo</string>
+    <string name="ex2">地图定位Demo</string>
+    <string name="ex3">聊天Demo</string>
+
+</resources>

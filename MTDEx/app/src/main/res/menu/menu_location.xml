@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.actionbartest.MainActivity" >
+
+    <item
+        android:id="@+id/action_loc_present"
+        android:title="定位到当前点"/>
+    <item
+        android:id="@+id/action_loc_coordinate"
+        android:title="经纬度坐标查询"/>
+    <item
+        android:id="@+id/action_loc_search"
+        android:title="搜索查询"/>
+
+</menu>
