@@ -40,25 +40,38 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
-    private ListView lvMsg;
+    private static final int UPDATE_SETTING = 0;
+    private static final int RECEIVE_MESSAGE = 1;
+    private static final int SEND_MESSAGE = 2;
+
+    // 输入框和发送按钮
     private EditText etMessageSending;
     private Button btSendMessage;
-    private MsgAdapter adapter;
-    private TextView tvSettings;
 
+    // 展示消息用的ListView
+    private ListView lvMsg;
+    // 相应的适配器
+    private MsgAdapter adapter;
     private List<Msg> msgList = new ArrayList<Msg>();
 
-    private String thisIP;
+    // 展示设置信息用的TextView
+    private TextView tvSettings;
+
+    // 本机
+    private static String thisIP;
     private int thisPort;
+    // 通信对方
     private String thatIP;
     private int thatProt;
 
+    // 两个线程类的实例：分别是Server和Client作用
     private ServerListener listener;
     private ClientSend clientSend;
 
@@ -68,92 +81,86 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
-        //获取wifi服务
+        // 获取wifi服务
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        //判断wifi是否开启
+        // 判断wifi是否开启
         if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
         }
+        // 获取网络信息：局域网内的信息
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        // 得到本机IP
         int ipAddress = wifiInfo.getIpAddress();
         thisIP = intToIp(ipAddress);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("本机IP："+thisIP);
+        actionBar.setTitle("  本机IP："+thisIP);
 
-        adapter = new MsgAdapter(ChatRoomActivity.this, R.layout.msg_item, msgList);
-        etMessageSending = (EditText)findViewById(R.id.edit_sending_message);
-
-//        initMsgs();
         lvMsg = (ListView)findViewById(R.id.msg_list_view);
+        adapter = new MsgAdapter(ChatRoomActivity.this, R.layout.msg_item, msgList);
         lvMsg.setAdapter(adapter);
 
+        etMessageSending = (EditText)findViewById(R.id.edit_sending_message);
+        tvSettings = (TextView)findViewById(R.id.text_settings);
+
         btSendMessage = (Button)findViewById(R.id.button_send_message);
+        // 未设置信息时，不可点击
+        btSendMessage.setClickable(false);
         btSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String content = etMessageSending.getText().toString();
                 if(!"".equals(content)) {
 
-                    clientSend = new ClientSend(thatIP,thatProt,content);
+                    // 新建client发送的线程，socket通信，发送输入框输入的内容
+                    clientSend = new ClientSend(thatIP, thatProt, content);
                     clientSend.start();
                 }
             }
         });
-        btSendMessage.setClickable(false);
-
-        tvSettings = (TextView)findViewById(R.id.text_settings);
 
     }
 
-    private void initMsgs () {
-        Msg msg1 = new Msg("hello guy", Msg.TYPE_RECEIVED);
-        msgList.add(msg1);
-        Msg msg2 = new Msg("hee",Msg.TYPE_SENT);
-        msgList.add(msg2);
-
-    }
-
+    // handler 处理在子线程内改变UI的情况
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message meg) {
             switch (meg.what) {
-                case 0:
-//                    Log.d("recHandler","ss"+(String)meg.obj);
+                case ChatRoomActivity.UPDATE_SETTING:
+                    // 显示设置信息，包括本机IP、端口，对方IP、端口
+                    getSupportActionBar().setTitle("  本机： "+thisIP+" : "+thisPort);
+                    tvSettings.setText("ToDevice:  "+thatIP+" : "+thatProt);
+                    break;
+                case ChatRoomActivity.RECEIVE_MESSAGE:
+                    // 添加一个"接收"类型的消息
                     Msg msg = new Msg((String)meg.obj, Msg.TYPE_RECEIVED);
                     msgList.add(msg);
                     adapter.notifyDataSetChanged();
                     lvMsg.setSelection(msgList.size());
                     break;
-                case 1:
-                    getSupportActionBar().setTitle("本机："+thisIP+":"+thisPort);
-                    tvSettings.setText("To: "+thatIP+":"+thatProt);
-                    break;
-                case 2:
-//                    Log.d("recHandler","ss"+(String)meg.obj);
+                case ChatRoomActivity.SEND_MESSAGE:
                     Msg msg1 = new Msg((String)meg.obj, Msg.TYPE_SENT);
                     msgList.add(msg1);
                     adapter.notifyDataSetChanged();
                     lvMsg.setSelection(msgList.size());
                     etMessageSending.setText("");
+                    break;
             }
         }
     };
 
-
-    private String intToIp(int i) {
-
-        return (i & 0xFF ) + "." +
-                ((i >> 8 ) & 0xFF) + "." +
-                ((i >> 16 ) & 0xFF) + "." +
-                ( i >> 24 & 0xFF) ;
-    }
+    /**
+     * 菜单相关
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_chat_settings, menu);
         return super.onCreateOptionsMenu(menu);
-    }@Override
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
@@ -165,6 +172,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
     }
 
+    // 打开一个Dialog，来设置通信设置
     private void showChatSettingsDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.dialog_chat_setting, (ViewGroup) findViewById(R.id.dialog_chat_setting));
@@ -187,14 +195,19 @@ public class ChatRoomActivity extends AppCompatActivity {
                         thatProt = Integer.valueOf(etThatPort.getText().toString());
 
                         if(thisPort != 0.0 && thatProt != 0.0 && !"".equals(thatIP) && thatIP!=null) {
+                            // 设置可点击
                             btSendMessage.setClickable(true);
-//                            msgList = new ArrayList<Msg>();
+
                             msgList.removeAll(msgList);
                             adapter.notifyDataSetChanged();
+
+                            // 启动一个Server线程，监听端口
                             listener = new ServerListener(thisPort);
                             listener.start();
+
+                            // 添加设置信息展示
                             Message message = new Message();
-                            message.what = 1;
+                            message.what = ChatRoomActivity.UPDATE_SETTING;
                             handler.sendMessage(message);
                         }
 
@@ -207,6 +220,9 @@ public class ChatRoomActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 客户端通过Socket发送消息的线程
+     */
     class ClientSend extends Thread {
         private String serverIP;
         private int serverPort;
@@ -223,27 +239,35 @@ public class ChatRoomActivity extends AppCompatActivity {
         @Override
         public void run() {
             try{
+
+                // 实例化一个Socket
                 clientSocket = new Socket(this.serverIP,this.serverPort);
+                // 打开OutputStream
                 OutputStream outputStream = clientSocket.getOutputStream();
+                // 写数据，完成发送
                 outputStream.write(this.content.getBytes());
 
+                // 添加一个"发送"类型消息的展示（如果Socket发送成功的话，不然会报错）
                 Message message = new Message();
-                message.what = 2;
+                message.what = ChatRoomActivity.SEND_MESSAGE;
                 message.obj = content;
-
                 handler.sendMessage(message);
 
             }catch (IOException e) {
                 Looper.prepare();
-                Toast.makeText(ChatRoomActivity.this,"发送失败:"+e.toString(),Toast.LENGTH_LONG).show();
+                // 发送失败，显示原因
+                Toast.makeText(ChatRoomActivity.this,"发送失败: \n"+e.toString(),Toast.LENGTH_LONG).show();
                 Looper.loop();
-                e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Socket通信服务端监听线程
+     */
     class ServerListener extends Thread {
         private int serverPort;
+
         public ServerListener(int port) {
             super();
             this.serverPort = port;
@@ -252,11 +276,16 @@ public class ChatRoomActivity extends AppCompatActivity {
         @Override
         public void run() {
             ServerSocket serverSocket;
+
             try {
-                serverSocket = new ServerSocket(this.serverPort);
+                // 实例化一个ServerSocket，监听特定端口
+                serverSocket = new ServerSocket(serverPort);
+
                 while(true) {
+                    // ServerSocket监听阻塞
                     Socket socket = serverSocket.accept();
 
+                    // 接收到通信体后，赋给socket，读出其中的数据
                     DataInputStream dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                     byte[] bytes = new byte[1024];
                     dataInputStream.read(bytes);
@@ -264,18 +293,19 @@ public class ChatRoomActivity extends AppCompatActivity {
                     receive = new String(bytes, StandardCharsets.UTF_8);
 
                     dataInputStream.close();
+
+                    // receive中存储着接收到的消息
                     if (!"".equals(receive)) {
-                        Log.d("socketrec",receive);
+                        // 添加一个"接收"类型的消息
                         Message message = new Message();
-                        message.what = 0;
+                        message.what = ChatRoomActivity.RECEIVE_MESSAGE;
                         message.obj = receive;
                         handler.sendMessage(message);
                     }
-
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Looper.prepare();
-                Toast.makeText(ChatRoomActivity.this,"绑定失败:"+e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ChatRoomActivity.this,"绑定失败: \n"+e.toString(),Toast.LENGTH_LONG).show();
                 Looper.loop();
                 e.printStackTrace();
             }
@@ -293,7 +323,19 @@ public class ChatRoomActivity extends AppCompatActivity {
             clientSend = null;
         }
         super.onDestroy();
+    }
 
+    /**
+     * 格式化IP
+     * @param i
+     * @return
+     */
+    private String intToIp(int i) {
+
+        return (i & 0xFF ) + "." +
+                ((i >> 8 ) & 0xFF) + "." +
+                ((i >> 16 ) & 0xFF) + "." +
+                ( i >> 24 & 0xFF) ;
     }
 
 

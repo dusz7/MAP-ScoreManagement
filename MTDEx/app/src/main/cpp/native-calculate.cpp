@@ -2,8 +2,6 @@
 // Created by  Du Shengzhe on 2017/6/22.
 //
 
-#include "native-calculate.h"
-
 #include <jni.h>
 #include <string>
 #include <sstream>
@@ -11,18 +9,8 @@
 
 using namespace std;
 
-extern "C"
-JNIEXPORT jstring JNICALL
-Java_com_hitiot_dusz7_mtdex_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
-
-
 enum Token_value{
-    NUMBER,END,PLUS='+',MINUS='-',MUL='*',DIV='/',PRINT=';',ASSIGN='='
+    NUMBER,END,PLUS='+',MINUS='-',MUL='*',DIV='/',PRINT=';'
 };
 
 Token_value curr_tok=PRINT;
@@ -58,8 +46,6 @@ Java_com_hitiot_dusz7_mtdex_ex1_CalculatorActivity_calculateResultFromJNI(
     double result = 0.0;
     form << str;
     char test;
-//    form >> test;
-//    __android_log_print(ANDROID_LOG_INFO, "JNIMsg", "qq%c",test);
     while (form) {
         get_token();
         if (curr_tok==END) break;
@@ -76,7 +62,6 @@ Java_com_hitiot_dusz7_mtdex_ex1_CalculatorActivity_calculateResultFromJNI(
     ostringstream temp;
     temp << result;
     return env->NewStringUTF(temp.str().c_str());
-//    return result;
 
 }
 
@@ -86,7 +71,6 @@ Java_com_hitiot_dusz7_mtdex_ex1_CalculatorActivity_calculateResultFromJNI(
 double error(const string& s)
 {
     no_of_errors++;
-//    cerr<<"error:"<<s<<endl;
     error_value = "error:" + s;
     return 1;
 }

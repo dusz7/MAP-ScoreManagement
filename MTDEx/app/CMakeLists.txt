@@ -19,10 +19,6 @@ add_library( # Specifies the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-calculate.cpp )
 
-
-# Specifies a path to native header files.
-include_directories(src/main/cpp/include/)
-
 find_library( # Defines the name of the path variable that stores the
               # location of the NDK library.
               log-lib

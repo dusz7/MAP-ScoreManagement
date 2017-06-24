@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--弹球实验中的"黑色方框"-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/pinball_frame_bg"></solid>
+    <solid
+        android:color="@color/pinball_frame_bg"/>
 
     <padding
         android:bottom="6dp"
@@ -12,6 +15,6 @@
 
     <stroke
         android:color="@color/pinball_frame_stroke"
-        android:width="3dp">
-    </stroke>
+        android:width="3dp"/>
+
 </shape>

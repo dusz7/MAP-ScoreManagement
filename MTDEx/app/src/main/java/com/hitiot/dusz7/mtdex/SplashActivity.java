@@ -11,6 +11,9 @@ import android.view.View;
  * Created by dusz7 on 2017/6/18.
  */
 
+/**
+ * 欢迎页面
+ */
 public class SplashActivity extends Activity {
 
     @Override

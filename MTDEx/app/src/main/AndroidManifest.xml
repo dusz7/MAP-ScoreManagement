@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 允许程序访问WiFi网络信息 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <!-- 允许程序读写手机状态和身份 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 允许程序访问CellID或WiFi热点来获取粗略的位置 -->
@@ -17,23 +18,19 @@
     <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="75f28641c43dff05539da0035e32077d" />
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/main_title"></activity>
+            android:name=".MainActivity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/AppTheme.Welcome">
@@ -46,10 +43,16 @@
         <activity android:name=".ex1.CalculatorActivity" />
         <activity android:name=".ex1.PinballActivity" />
         <activity android:name=".ex2.LocationActivity" />
+        <activity android:name=".ex3.ChatRoomActivity" />
 
+        <!--这是添加高德SDK key的地方-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="75f28641c43dff05539da0035e32077d" />
+
+        <!--貌似这个服务如果不一直定位的话，也用不到-->
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".ex3.ChatRoomActivity"></activity>
     </application>
 
 </manifest>

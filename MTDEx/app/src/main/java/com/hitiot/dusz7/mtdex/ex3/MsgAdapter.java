@@ -13,6 +13,7 @@ import com.hitiot.dusz7.mtdex.R;
 import java.util.List;
 
 /**
+ * 自定义ListView适配器类
  * Created by dusz7 on 2017/6/22.
  */
 

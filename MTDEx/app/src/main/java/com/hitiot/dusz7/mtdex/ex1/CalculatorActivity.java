@@ -19,6 +19,7 @@ public class CalculatorActivity extends AppCompatActivity{
 
     EditText editTextFormula;
     EditText textTextResult;
+    // 调用的Java某计算引擎库
     private Symbols mSymbols;
 
     static {
@@ -59,12 +60,17 @@ public class CalculatorActivity extends AppCompatActivity{
         }
     }
 
-
+    /**
+     * 按"="之后，根据输入的公式计算结果
+     */
     private void onEquals() {
         String formula = editTextFormula.getText().toString();
 
+        // 调用c++ native方法
         String result = calculateResultFromJNI(formula);
         textTextResult.setText(result+"");
+
+        // 调用Java 计算引擎库
 //        try {
 //            Double result = mSymbols.eval(formula);
 //            textTextResult.setText(result+"");
@@ -75,6 +81,9 @@ public class CalculatorActivity extends AppCompatActivity{
 
     }
 
+    /**
+     * 按"del"回退键以后
+     */
     private void onDelete() {
         // Delete works like backspace; remove the last character from the expression.
         final Editable formulaText = editTextFormula.getEditableText();
@@ -84,6 +93,9 @@ public class CalculatorActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * 按"clr"清除键以后
+     */
     private void onClear() {
         if (TextUtils.isEmpty(editTextFormula.getText())) {
             return;
@@ -94,5 +106,10 @@ public class CalculatorActivity extends AppCompatActivity{
 
     }
 
+    /**
+     * 声明计算的native方法
+     * @param formula
+     * @return
+     */
     public native String calculateResultFromJNI(String formula);
 }

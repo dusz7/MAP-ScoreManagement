@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -26,11 +25,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-calculate");
-    }
-
     private final int INTERNET_REQUEST_CODE = 0;
     private final int ACCESS_NETWORK_STATE_REQUEST_CODE = 1;
     private final int ACCESS_WIFI_STATE_REQUEST_CODE = 2;
@@ -38,16 +32,13 @@ public class MainActivity extends AppCompatActivity {
     private final int WRITE_COARSE_LOCATION_REQUEST_CODE = 4;
     private final int WRITE_FINE_LOCATION_REQUEST_CODE = 5;
 
-
-    private GridView gridView;
-    private List<Map<String, Object>> data_list;
-    private SimpleAdapter adapter;
-
-    private int[] icons = {R.drawable.calculator_icon,R.drawable.pinball_icon,
-    R.drawable.map_icon,R.drawable.chat_icon};
-
-    private int[] text = {R.string.ex1_1,R.string.ex1_2,R.string.ex2,R.string.ex3};
-
+    // 与主Activity中的GridView相关
+    private static GridView gridView;
+    private static SimpleAdapter adapter;
+    // 把icons和texts关联起来
+    private static List<Map<String, Object>> data_list = new ArrayList<Map<String, Object>>();
+    private static int[] icons = {R.drawable.calculator_icon, R.drawable.pinball_icon, R.drawable.map_icon, R.drawable.chat_icon};
+    private static int[] texts = {R.string.ex1_1,R.string.ex1_2,R.string.ex2,R.string.ex3};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("这里是移动开发的实验箱");
+//        actionBar.setDisplayUseLogoEnabled(true);
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setIcon(R.mipmap.ic_launcher);
 
+        // 主动获取权限
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -96,14 +92,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         gridView = (GridView)findViewById(R.id.grid_main);
-        data_list = new ArrayList<Map<String, Object>>();
+
+        // 初始化data_list
         getData();
-        //加载适配器
-        String[] form = {"image", "text"};
+        // 加载适配器，绑定cell_item上的image和text
+        String[] form = {"image", "texts"};
         int[] to = {R.id.image_button, R.id.text_button};
         adapter = new SimpleAdapter(this, data_list, R.layout.cell_item, form, to);
+        // 绑定适配器
         gridView.setAdapter(adapter);
-        //监听item每一项
+        // item监听事件，通过被点击item的index判断来做不同的事情
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -124,24 +122,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
-    //准备数据源
+    /**
+     * 准备GridView的数据源
+     */
     public void getData() {
 
         for (int i = 0; i < icons.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("image", icons[i]);
-            map.put("text", getResources().getString(text[i]));
+            map.put("texts", getResources().getString(texts[i]));
             data_list.add(map);
         }
     }
 
-
     /**
-     * 实现只有应用第一次启动的时候有启动页面
+     * 实现只有应用第一次启动的时候有欢迎页面：SplashActivity
      */
     @Override
     public void onBackPressed() {
@@ -151,14 +148,6 @@ public class MainActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_HOME);
         startActivity(intent);
     }
-
-
-    /**
-     * A native method that is implemented by the 'native-calculate' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
-
 
 
 }

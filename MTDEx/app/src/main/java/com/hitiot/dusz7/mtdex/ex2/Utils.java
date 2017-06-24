@@ -37,7 +37,7 @@ public class Utils {
     public final static String URL_H5LOCATION = "file:///android_asset/location_icon.html";
     /**
      * 根据定位结果返回定位信息的字符串
-     * @param loc
+     * @param
      * @return
      */
     public synchronized static String getLocationStr(AMapLocation location){
@@ -97,6 +97,7 @@ public class Utils {
 
             sb.append(location.getLongitude() + ",");
             sb.append(location.getLatitude());
+            sb.append("  :  ");
 //            if (location_icon.getProvider().equalsIgnoreCase(
 //                    android.location_icon.LocationManager.GPS_PROVIDER)) {
 //                // 以下信息只有提供者是GPS时才会有
