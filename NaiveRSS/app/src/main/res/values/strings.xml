@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">NaiveRSS</string>
+
+    <string name="inspect_content">浏览订阅</string>
+    <string name="rss_source">RSS源管理</string>
+    <string name="favorite_manager">收藏管理</string>
+    <string name="app_setting">应用设置</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+
+</resources>

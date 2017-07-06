@@ -194,6 +194,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                         thatIP = (etThatIP.getText().toString());
                         thatProt = Integer.valueOf(etThatPort.getText().toString());
 
+
                         if(thisPort != 0.0 && thatProt != 0.0 && !"".equals(thatIP) && thatIP!=null) {
                             // 设置可点击
                             btSendMessage.setClickable(true);

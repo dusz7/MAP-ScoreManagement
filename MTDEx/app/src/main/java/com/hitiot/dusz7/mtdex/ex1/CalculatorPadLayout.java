@@ -42,7 +42,6 @@ public class CalculatorPadLayout extends ViewGroup {
         final int paddingRight = getPaddingRight();
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
-
         final boolean isRTL = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
 
         //计算单个元素的宽度，等分

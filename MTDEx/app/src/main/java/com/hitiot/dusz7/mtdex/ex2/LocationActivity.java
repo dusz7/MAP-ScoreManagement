@@ -61,8 +61,8 @@ public class LocationActivity extends AppCompatActivity implements PoiSearch.OnP
         actionBar.setTitle("这是关于定位的实验：使用高德SDK");
 
         // 下面两个方法是一直在定位的，对于本次实验也并没有什么用
-        initLocation();
-        startLocation();
+//        initLocation();
+//        startLocation();
 
         //获取地图控件引用
         mapView = (MapView) findViewById(R.id.map);

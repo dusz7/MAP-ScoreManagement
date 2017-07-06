@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static GridView gridView;
     private static SimpleAdapter adapter;
     // 把icons和texts关联起来
-    private static List<Map<String, Object>> data_list = new ArrayList<Map<String, Object>>();
+    private static List<Map<String, Object>> data_list;
     private static int[] icons = {R.drawable.calculator_icon, R.drawable.pinball_icon, R.drawable.map_icon, R.drawable.chat_icon};
     private static int[] texts = {R.string.ex1_1,R.string.ex1_2,R.string.ex2,R.string.ex3};
 
@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void getData() {
 
+        data_list = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < icons.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("image", icons[i]);
